@@ -3,13 +3,13 @@ using System.ComponentModel.DataAnnotations;
 
 public class EventDto
 {
-    public int user_id { get; set; }
-    public int? category_id { get; set; }
-    
-    [Required]
-    [StringLength(255)]
-    public string title { get; set; } = string.Empty;
-    public string? description { get; set; }
+    public int UserId { get; set; }
+    public int? CategoryId { get; set; }
+    public string? Title { get; set; }
+    public string? Description { get; set; }
+    public DateTime Date { get; set; }
+    public DateTime CreatedAt { get; set; }
 
-    public DateTime created_at { get; set; } = DateTime.UtcNow;
+    public UserDto? User { get; set; }
+    public CategoryDto? Category { get; set; }
 }

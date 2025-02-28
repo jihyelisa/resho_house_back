@@ -6,13 +6,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 public class Like
 {
     [Key]
-    public int id { get; set; }
+    public int Id { get; set; }
 
     [Required]
-    public int user_id { get; set; }
+    public int UserId { get; set; }
 
-    public int? event_id { get; set; }
-    public int? comment_id { get; set; }
+    public int? EventId { get; set; }
+    public int? CommentId { get; set; }
 
     // [ForeignKey("UserId")]
     // public virtual User User { get; set; } = new User();

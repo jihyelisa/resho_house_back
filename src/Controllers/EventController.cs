@@ -15,7 +15,7 @@ public class EventController : ControllerBase
 
     // 1️⃣ 전체 이벤트 조회 (GET: api/events)
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Event>>> GetEvents()
+    public async Task<ActionResult<IEnumerable<EventDto>>> GetEvents()
     {
         var events = await _eventService.GetAllEventsAsync();
         return Ok(events);
@@ -38,6 +38,6 @@ public class EventController : ControllerBase
     public async Task<ActionResult<Event>> CreateEvent(EventDto eventDto)
     {
         var newEvent = await _eventService.CreateEventAsync(eventDto);
-        return CreatedAtAction(nameof(GetEventById), new { id = newEvent.id }, newEvent);
+        return CreatedAtAction(nameof(GetEventById), new { Id = newEvent.Id }, newEvent);
     }
 }

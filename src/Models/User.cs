@@ -1,26 +1,28 @@
 using System;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 public class User
 {
     [Key]
-    public int id { get; set; }
-
-    public string? profile_image_url { get; set; }
+    public int Id { get; set; }
 
     [Required]
     [StringLength(50)]
-    public string username { get; set; } = string.Empty;
+    public string Userid { get; set; } = string.Empty;
 
-    public DateTime? birthday { get; set; }
+    public string? ProfileImageUrl { get; set; }
+
+    [StringLength(50)]
+    public string? Username { get; set; } = string.Empty;
+
+    public DateTime? Birthday { get; set; }
 
     [StringLength(100)]
-    public string? email { get; set; }
+    public string? Email { get; set; }
 
     [Required]
-    public string password_hash { get; set; } = string.Empty;
+    public string PasswordHash { get; set; } = string.Empty;
 
-    public DateTime created_at { get; set; } = DateTime.UtcNow; // Ensure Utc kind
-    public DateTime? updated_at { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime? UpdatedAt { get; set; }
 }

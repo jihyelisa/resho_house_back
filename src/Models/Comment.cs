@@ -1,32 +1,21 @@
-using Npgsql;
 using System;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 public class Comment
 {
     [Key]
-    public int id { get; set; }
+    public int Id { get; set; }
 
-    public int event_id { get; set; }
-
-    [Required]
-    public int user_id { get; set; }
-
-    public int? parent_comment_id { get; set; }
+    public int EventId { get; set; }
 
     [Required]
-    public string content { get; set; } = string.Empty;
+    public int UserId { get; set; }
 
-    public DateTime created_at { get; set; } = DateTime.UtcNow;
-    public DateTime? updated_at { get; set; }
+    public int? ParentCommentId { get; set; }
 
-    // [ForeignKey("EventId")]
-    // public virtual Event Event { get; set; } = new Event();
+    [Required]
+    public string Content { get; set; } = string.Empty;
 
-    // [ForeignKey("UserId")]
-    // public virtual User User { get; set; } = new User();
-
-    // [ForeignKey("ParentCommentId")]
-    // public virtual Comment? ParentComment { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime? UpdatedAt { get; set; }
 }
