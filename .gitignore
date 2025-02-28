@@ -1,0 +1,44 @@
+# **빌드 결과물 제외**
+bin/
+obj/
+
+# **환경 설정 파일 제외**
+*.config
+*.log
+
+# **사용자 환경 파일**
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# **시크릿 환경 파일 제외**
+appsettings.json
+appsettings.Development.json
+secrets.json
+
+# **Entity Framework 마이그레이션 관련**
+Migrations/
+
+# **패키지 및 임시 파일 제외**
+*.vs/
+*.DS_Store
+*.swp
+*.lock
+*.bak
+*.tmp
+*.cache
+*.log
+
+# **디버깅 파일 제외**
+*.pdb
+*.dll
+*.exe
+
+# **프로젝트 파일 제외**
+backend_v1_04.http
+
+# **NuGet 패키지 캐시 제외**
+packages/
