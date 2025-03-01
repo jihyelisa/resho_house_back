@@ -6,7 +6,6 @@ public class AppDbContext : DbContext
 
     public DbSet<User> Users { get; set; }
     public DbSet<Event> Events { get; set; }
-    public DbSet<EventParticipant> EventParticipants { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<EventImage> EventImages { get; set; }
     public DbSet<Comment> Comments { get; set; }

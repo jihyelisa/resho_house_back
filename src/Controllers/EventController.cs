@@ -14,10 +14,10 @@ public class EventController : ControllerBase
     }
 
     // 1️⃣ 전체 이벤트 조회 (GET: api/events)
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<EventDto>>> GetEvents()
+    [HttpPost]
+    public async Task<ActionResult<IEnumerable<EventDto>>> GetEvents(string searchType, string searchText)
     {
-        var events = await _eventService.GetAllEventsAsync();
+        var events = await _eventService.GetEventListAsync(searchType, searchText);
         return Ok(events);
     }
 
