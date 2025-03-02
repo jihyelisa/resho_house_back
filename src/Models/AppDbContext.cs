@@ -15,21 +15,5 @@ public class AppDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-
-        
-    //     modelBuilder.Entity<Like>()
-    //         .HasOne(l => l.Event)
-    //         .WithMany()
-    //         .HasForeignKey(l => l.EventId)
-    //         .OnDelete(DeleteBehavior.Cascade);
-
-    //     modelBuilder.Entity<Like>()
-    //         .HasOne(l => l.Comment)
-    //         .WithMany()
-    //         .HasForeignKey(l => l.CommentId)
-    //         .OnDelete(DeleteBehavior.Cascade);
-
-
-        
     }
 }

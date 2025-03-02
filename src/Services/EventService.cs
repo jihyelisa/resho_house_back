@@ -12,7 +12,7 @@ public class EventService
     }
 
     // 전체 이벤트 조회
-    public async Task<IEnumerable<EventDto>> GetEventListAsync(string searchType, string searchText)
+    public async Task<IEnumerable<EventDto>> GetEventListAsync(string searchType, string? searchText, string orderBy)
     {
         var eventList = await _context.Events
             .Include(e => e.User)
@@ -29,8 +29,13 @@ public class EventService
                 
                 case "Writer":
                     eventList = eventList.Where(e => e.User != null &&
-                                                    e.User.Username != null &&
-                                                    e.User.Username.Contains(searchText)).ToList();
+                                                     e.User.Username != null &&
+                                                     e.User.Username.Contains(searchText)).ToList();
+                    break;
+                
+                case "Category":
+                    eventList = eventList.Where(e => e.Category != null &&
+                                                     e.Category.Name.Contains(searchText)).ToList();
                     break;
                 
                 // case "Participant":
@@ -45,6 +50,22 @@ public class EventService
 
         if (eventList == null)
             return [];
+        
+        switch (orderBy)
+        {
+            case "WrittenDateDesc":
+                eventList = eventList.OrderByDescending(e => e.CreatedAt).ToList();
+                break;
+            case "WrittenDateAsc":
+                eventList = eventList.OrderBy(e => e.CreatedAt).ToList();
+                break;
+            case "EventDateDesc":
+                eventList = eventList.OrderByDescending(e => e.Date).ToList();
+                break;
+            case "EventDateAsc":
+                eventList = eventList.OrderBy(e => e.Date).ToList();
+                break;
+        }
 
         var eventListWithImages = eventList.Select(e => new EventDto
         {

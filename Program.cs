@@ -24,6 +24,8 @@ builder.Services.AddControllers();
 
 // 서비스 등록
 builder.Services.AddScoped<EventService>();
+builder.Services.AddScoped<AuthService>();
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
