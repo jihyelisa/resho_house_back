@@ -1,9 +1,9 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.Extensions.Configuration;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.EntityFrameworkCore;
+using BCrypt.Net;
 
 public class AuthService
 {
@@ -22,15 +22,17 @@ public class AuthService
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == loginDto.Email);
         if (user == null) return null;  // 사용자 없음
 
-        // 2️⃣ 비밀번호 검증 (실제 환경에서는 암호화된 비밀번호를 비교해야 함)
-        if (user.PasswordHash != loginDto.Password)
+        // 2️⃣ 비밀번호 검증 (해싱된 비밀번호 비교) → ❗ 실제 환경에서는 `BCrypt` 등 사용 필요 ❗
+        if (!BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash))
         {
-            return null; // 비밀번호 불일치
+            return null;
         }
 
         // 3️⃣ JWT 토큰 생성
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.UTF8.GetBytes(_configuration["Jwt:SecretKey"] ?? "defaultSecretKey");
+        var issuer = _configuration["Jwt:Issuer"] ?? "http://localhost:5232";
+        var audience = _configuration["Jwt:Audience"] ?? "http://localhost:5232";
 
         var tokenDescriptor = new SecurityTokenDescriptor
         {
@@ -38,13 +40,14 @@ public class AuthService
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Email, user.Email),
-                //new Claim("Username", user.Username)
             }),
-            Expires = DateTime.UtcNow.AddHours(2), // 토큰 만료 시간 설정
+            Expires = DateTime.UtcNow.AddHours(2),
+            Issuer = issuer,
+            Audience = audience,
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
         };
 
         var token = tokenHandler.CreateToken(tokenDescriptor);
-        return tokenHandler.WriteToken(token); // JWT 토큰 반환
+        return tokenHandler.WriteToken(token);
     }
 }

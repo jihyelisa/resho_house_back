@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.Security.Cryptography;
+using System.Text;
 
 public class UserService
 {
@@ -11,26 +11,65 @@ public class UserService
         _context = context;
     }
 
-    public async Task<User?> GetEventByIdAsync(int id)
+    public async Task<UserDto?> RegisterUserAsync(RegisterDto registerDto)
     {
-        return await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
-    }
+        if (await _context.Users.AnyAsync(u => u.Email == registerDto.Email))
+            return null;
 
-    // 이벤트 생성
-    public async Task<Event> CreateEventAsync(EventDto eventDto)
-    {
-        var newEvent = new Event
+        var newUser = new User
         {
-            UserId = eventDto.UserId,
-            CategoryId = eventDto.CategoryId,
-            Title = eventDto.Title ?? "",
-            Content = eventDto.Content,
-            Date = eventDto.Date,
-            EventImageList = eventDto.EventImageList
+            Email = registerDto.Email,
+            Username = registerDto.Email.Split('@')[0],
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerDto.Password),
+            CreatedAt = DateTime.UtcNow
         };
 
-        _context.Events.Add(newEvent);
+        _context.Users.Add(newUser);
         await _context.SaveChangesAsync();
-        return newEvent;
+
+        return new UserDto
+        {
+            Id = newUser.Id,
+            Email = newUser.Email,
+            Username = newUser.Username
+        };
+    }
+
+    public async Task<UserDto?> GetUserProfileAsync(int userId)
+    {
+        var UserItem = await _context.Users.Where(u => u.Id == userId).FirstOrDefaultAsync();
+        if (UserItem == null) return null;
+
+        return new UserDto
+        {
+            Id = UserItem.Id,
+            ProfileImageUrl = UserItem.ProfileImageUrl,
+            Email = UserItem.Email,
+            Username = UserItem.Username,
+            Birthday = UserItem.Birthday
+        };
+    }
+
+    public async Task<bool> UpdateUserProfileAsync(int userId, UserDto updatedUser)
+    {
+        var user = await _context.Users.FindAsync(userId);
+        if (user == null) return false;
+
+        user.Username = !string.IsNullOrWhiteSpace(updatedUser.Username) ? updatedUser.Username : user.Username;
+        user.ProfileImageUrl = updatedUser.ProfileImageUrl ?? user.ProfileImageUrl;
+        user.Birthday = updatedUser.Birthday ?? user.Birthday;
+        user.UpdatedAt = DateTime.UtcNow;
+
+        await _context.SaveChangesAsync();
+
+        return true;
+    }
+
+    private string HashPassword(string password)
+    {
+        using var sha256 = SHA256.Create();
+        var bytes = Encoding.UTF8.GetBytes(password);
+        var hash = sha256.ComputeHash(bytes);
+        return Convert.ToBase64String(hash);
     }
 }
