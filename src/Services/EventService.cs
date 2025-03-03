@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Web;
 
 public class EventService
 {
@@ -137,8 +138,8 @@ public class EventService
         {
             UserId = eventDto.UserId,
             CategoryId = eventDto.CategoryId,
-            Title = eventDto.Title ?? "",
-            Content = eventDto.Content,
+            Title = HttpUtility.HtmlEncode(eventDto.Title) ?? "",
+            Content = HttpUtility.HtmlEncode(eventDto.Content),
             Date = eventDto.Date,
             EventImageList = eventDto.EventImageList
         };

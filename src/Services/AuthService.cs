@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Web;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.EntityFrameworkCore;
 using BCrypt.Net;
@@ -18,6 +19,8 @@ public class AuthService
 
     public async Task<string?> Authenticate(LoginDto loginDto)
     {
+        loginDto.Email = HttpUtility.HtmlEncode(loginDto.Email);
+
         // 1️⃣ 사용자 정보 확인 (이메일로 검색)
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == loginDto.Email);
         if (user == null) return null;  // 사용자 없음

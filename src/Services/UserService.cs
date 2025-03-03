@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
+using System.Web;
 
 public class UserService
 {
@@ -13,8 +15,11 @@ public class UserService
 
     public async Task<UserDto?> RegisterUserAsync(RegisterDto registerDto)
     {
-        if (await _context.Users.AnyAsync(u => u.Email == registerDto.Email))
+        if (!IsValidEmail(registerDto.Email) ||
+            await _context.Users.AnyAsync(u => u.Email == registerDto.Email))
+        {
             return null;
+        }
 
         var newUser = new User
         {
@@ -54,6 +59,7 @@ public class UserService
     {
         var user = await _context.Users.FindAsync(userId);
         if (user == null) return false;
+        updatedUser.Username = HttpUtility.HtmlEncode(updatedUser.Username);
 
         user.Username = !string.IsNullOrWhiteSpace(updatedUser.Username) ? updatedUser.Username : user.Username;
         user.ProfileImageUrl = updatedUser.ProfileImageUrl ?? user.ProfileImageUrl;
@@ -63,6 +69,12 @@ public class UserService
         await _context.SaveChangesAsync();
 
         return true;
+    }
+
+    public bool IsValidEmail(string email)
+    {
+        var emailPattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
+        return Regex.IsMatch(email, emailPattern);
     }
 
     private string HashPassword(string password)
