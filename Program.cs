@@ -41,6 +41,17 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
         };
     });
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("AllowReactApp",
+            policy =>
+            {
+                policy.WithOrigins("http://localhost:5173")  // ✅ React의 도메인 허용
+                    .AllowAnyMethod()                      // ✅ GET, POST, PUT 등 모든 HTTP 메서드 허용
+                    .AllowAnyHeader()                      // ✅ 모든 헤더 허용 (Authorization 포함)
+                    .AllowCredentials();                   // ✅ 쿠키 & 인증 정보 포함 가능
+            });
+    });
 
 // 서비스 등록
 builder.Services.AddScoped<AuthService>();
@@ -51,6 +62,7 @@ builder.Services.AddScoped<NotificationService>();
 
 var app = builder.Build();
 
+app.UseCors("AllowReactApp");
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();

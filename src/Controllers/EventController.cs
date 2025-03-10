@@ -15,9 +15,12 @@ public class EventController : ControllerBase
         _eventService = eventService;
     }
 
-    // 1️⃣ 전체 이벤트 조회 (POST: api/events)
-    [HttpPost]
-    public async Task<ActionResult<IEnumerable<EventDto>>> GetEvents(string searchType, string? searchText, string orderBy)
+    // 1️⃣ 전체 이벤트 조회 (GET: api/events)
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<EventDto>>> GetEvents(
+        [FromQuery] string searchType,
+        [FromQuery] string? searchText,
+        [FromQuery] string orderBy)
     {
         var events = await _eventService.GetEventListAsync(searchType, searchText, orderBy);
         return Ok(events);
