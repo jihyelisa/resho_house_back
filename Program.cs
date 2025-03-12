@@ -46,7 +46,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         options.AddPolicy("AllowReactApp",
             policy =>
             {
-                policy.WithOrigins("http://localhost:5173")  // ✅ React의 도메인 허용
+                policy.WithOrigins("http://localhost:5173")// ✅ React의 도메인 허용
                     .AllowAnyMethod()                      // ✅ GET, POST, PUT 등 모든 HTTP 메서드 허용
                     .AllowAnyHeader()                      // ✅ 모든 헤더 허용 (Authorization 포함)
                     .AllowCredentials();                   // ✅ 쿠키 & 인증 정보 포함 가능
