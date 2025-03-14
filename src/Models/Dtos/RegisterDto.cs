@@ -9,6 +9,6 @@ public class RegisterDto
     public string? Username { get; set; }
 
     [Required]
-    [MinLength(6, ErrorMessage = "Password must be at least 6 characters long.")]
+    [MinLength(8, ErrorMessage = "Password must be at least 8 characters long.")]
     public string Password { get; set; } = string.Empty;
 }
