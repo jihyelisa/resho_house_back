@@ -19,17 +19,21 @@ public class AuthService
 
     public async Task<string?> Authenticate(LoginDto loginDto)
     {
+        Console.WriteLine(0);
+
         loginDto.Email = HttpUtility.HtmlEncode(loginDto.Email);
 
         // 1️⃣ 사용자 정보 확인 (이메일로 검색)
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == loginDto.Email);
         if (user == null) return null;  // 사용자 없음
+        Console.WriteLine(1);
 
         // 2️⃣ 비밀번호 검증 (해싱된 비밀번호 비교) → ❗ 실제 환경에서는 `BCrypt` 등 사용 필요 ❗
         if (!BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash))
         {
             return null;
         }
+        Console.WriteLine(2);
 
         // 3️⃣ JWT 토큰 생성
         var tokenHandler = new JwtSecurityTokenHandler();

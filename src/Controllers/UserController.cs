@@ -25,13 +25,20 @@ public class UserController : ControllerBase
     }
 
     // 2️⃣ Get User Profile (GET /api/users/me)
-    [Authorize]
     [HttpGet("me")]
     public async Task<IActionResult> GetProfile()
     {
-        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-        var user = await _userService.GetUserProfileAsync(userId);
-        return user != null ? Ok(user) : NotFound();
+        Console.WriteLine(User.FindFirstValue(ClaimTypes.NameIdentifier));
+        if (!string.IsNullOrEmpty(User.FindFirstValue(ClaimTypes.NameIdentifier)))
+        {
+            Console.WriteLine(111);
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            Console.WriteLine(userId);
+            var user = await _userService.GetUserProfileAsync(userId);
+            Console.WriteLine(user);
+            return Ok(user);
+        }
+        return Ok(null);
     }
 
     // 3️⃣ Update User Profile (PUT /api/users/me)

@@ -17,12 +17,21 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
     {
         var token = await _authService.Authenticate(loginDto);
-
         if (token == null)
         {
-            return Unauthorized(new { message = "Invalid email or password" });
+            return Ok(new { success = false, message = "Invalid email or password" });
         }
 
-        return Ok(new { token });
+        var cookieOptions = new CookieOptions
+        {
+            HttpOnly = true,
+            // Secure = true,
+            // SameSite = SameSiteMode.Strict,
+            Secure = false,
+            SameSite = SameSiteMode.Lax
+        };
+        Response.Cookies.Append("jwt", token, cookieOptions);  // ✅ 쿠키에 JWT 저장
+
+        return Ok(new { success = true, message = "Login successful" });
     }
 }

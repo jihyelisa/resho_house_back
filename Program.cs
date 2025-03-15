@@ -30,6 +30,19 @@ var secretKey = builder.Configuration["Jwt:SecretKey"] ?? "defaultSecretKey";
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var token = context.Request.Cookies["jwt"];
+                if (!string.IsNullOrEmpty(token))
+                {
+                    context.Token = token;
+                }
+                return Task.CompletedTask;
+            }
+        };
+
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
@@ -41,17 +54,17 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
         };
     });
-    builder.Services.AddCors(options =>
-    {
-        options.AddPolicy("AllowReactApp",
-            policy =>
-            {
-                policy.WithOrigins("http://localhost:5173")// ✅ React의 도메인 허용
-                    .AllowAnyMethod()                      // ✅ GET, POST, PUT 등 모든 HTTP 메서드 허용
-                    .AllowAnyHeader()                      // ✅ 모든 헤더 허용 (Authorization 포함)
-                    .AllowCredentials();                   // ✅ 쿠키 & 인증 정보 포함 가능
-            });
-    });
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:5173")// ✅ React의 도메인 허용
+                .AllowAnyMethod()                      // ✅ GET, POST, PUT 등 모든 HTTP 메서드 허용
+                .AllowAnyHeader()                      // ✅ 모든 헤더 허용 (Authorization 포함)
+                .AllowCredentials();                   // ✅ 쿠키 & 인증 정보 포함 가능
+        });
+});
 
 // 서비스 등록
 builder.Services.AddScoped<AuthService>();
