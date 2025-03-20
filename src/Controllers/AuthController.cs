@@ -34,4 +34,11 @@ public class AuthController : ControllerBase
 
         return Ok(new { success = true, message = "Login successful" });
     }
+
+    [HttpPost("logout")]
+    public async Task<IActionResult> Logout()
+    {
+        Response.Cookies.Delete("jwt");
+        return Ok(new { success = true, message = "Logged out successfully" });
+    }
 }
