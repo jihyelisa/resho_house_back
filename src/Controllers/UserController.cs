@@ -28,23 +28,20 @@ public class UserController : ControllerBase
     [HttpGet("me")]
     public async Task<IActionResult> GetProfile()
     {
-        Console.WriteLine(User.FindFirstValue(ClaimTypes.NameIdentifier));
-        if (!string.IsNullOrEmpty(User.FindFirstValue(ClaimTypes.NameIdentifier)))
+        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (!int.TryParse(userIdClaim, out int userId))
         {
-            Console.WriteLine(111);
-            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            Console.WriteLine(userId);
-            var user = await _userService.GetUserProfileAsync(userId);
-            Console.WriteLine(user);
-            return Ok(user);
+            return Unauthorized(new { message = "Invalid user ID" });
         }
-        return Ok(null);
+
+        var user = await _userService.GetUserProfileAsync(userId);
+        return user != null ? Ok(user) : NotFound(new { message = "User not found" });
     }
 
-    // 3️⃣ Update User Profile (PUT /api/users/me)
+    // 3️⃣ Update User Profile (PUT /api/users/update)
     [Authorize]
-    [HttpPut("me")]
-    public async Task<IActionResult> UpdateProfile([FromBody] UserDto updatedUser)
+    [HttpPut("update")]
+    public async Task<IActionResult> UpdateProfile([FromBody] User updatedUser)
     {
         var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         var success = await _userService.UpdateUserProfileAsync(userId, updatedUser);

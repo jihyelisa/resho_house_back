@@ -55,13 +55,19 @@ public class UserService
         };
     }
 
-    public async Task<bool> UpdateUserProfileAsync(int userId, UserDto updatedUser)
+    public async Task<bool> UpdateUserProfileAsync(int userId, User updatedUser)
     {
         var user = await _context.Users.FindAsync(userId);
         if (user == null) return false;
-        updatedUser.Username = HttpUtility.HtmlEncode(updatedUser.Username);
 
+        updatedUser.Username = HttpUtility.HtmlEncode(updatedUser.Username);
         user.Username = !string.IsNullOrWhiteSpace(updatedUser.Username) ? updatedUser.Username : user.Username;
+
+        var passwordHash = !string.IsNullOrWhiteSpace(updatedUser.PasswordHash)
+            ? BCrypt.Net.BCrypt.HashPassword(updatedUser.PasswordHash)
+            : null;
+        user.PasswordHash = !string.IsNullOrWhiteSpace(passwordHash) ? passwordHash : user.PasswordHash;
+        
         user.ProfileImageUrl = updatedUser.ProfileImageUrl ?? user.ProfileImageUrl;
         user.Birthday = updatedUser.Birthday ?? user.Birthday;
         user.UpdatedAt = DateTime.UtcNow;
