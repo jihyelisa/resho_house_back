@@ -19,15 +19,24 @@ public class AuthService
 
     public async Task<string?> Authenticate(LoginDto loginDto)
     {
-        loginDto.Email = HttpUtility.HtmlEncode(loginDto.Email);
+        // loginDto.Email = HttpUtility.HtmlEncode(loginDto.Email);
 
-        // 1️⃣ 사용자 정보 확인 (이메일로 검색)
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == loginDto.Email);
-        if (user == null) return null;  // 사용자 없음
+        // 1️⃣ 이메일 소문자로 통일 (대소문자 구분 문제 방지)
+        var normalizedEmail = loginDto.Email.ToLower();
+        Console.WriteLine(1);
 
-        // 2️⃣ 비밀번호 검증 (해싱된 비밀번호 비교) → ❗ 실제 환경에서는 `BCrypt` 등 사용 필요 ❗
+        // 2️⃣ 유저 찾기
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == normalizedEmail);
+        if (user == null) return null;
+        Console.WriteLine(2);
+
+        Console.WriteLine(user.PasswordHash);
+
+
+        // 3️⃣ 비밀번호 검증
         if (!BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash))
         {
+            Console.WriteLine(3);
             return null;
         }
 
@@ -36,6 +45,9 @@ public class AuthService
         var key = Encoding.UTF8.GetBytes(_configuration["Jwt:SecretKey"] ?? "defaultSecretKey");
         var issuer = _configuration["Jwt:Issuer"] ?? "http://localhost:5232";
         var audience = _configuration["Jwt:Audience"] ?? "http://localhost:5232";
+
+        Console.WriteLine(4);
+
 
         var tokenDescriptor = new SecurityTokenDescriptor
         {

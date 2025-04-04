@@ -45,6 +45,6 @@ public class UserController : ControllerBase
     {
         var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         var success = await _userService.UpdateUserProfileAsync(userId, updatedUser);
-        return success ? Ok(new { message = "Profile updated successfully." }) : NotFound();
+        return success ? Ok(new { message = "Profile updated successfully." }) : Ok(new { message = "Failed to update." });
     }
 }

@@ -24,6 +24,7 @@ public class UserService
         var newUser = new User
         {
             Email = registerDto.Email,
+            ProfileImageUrl = registerDto.ProfileImageUrl,
             Username = registerDto.Email.Split('@')[0],
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerDto.Password),
             CreatedAt = DateTime.UtcNow
@@ -31,6 +32,9 @@ public class UserService
 
         _context.Users.Add(newUser);
         await _context.SaveChangesAsync();
+
+        Console.WriteLine(newUser.PasswordHash);
+
 
         return new UserDto
         {
