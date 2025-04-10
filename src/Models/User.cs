@@ -11,6 +11,8 @@ public class User
     [StringLength(50)]
     public string? Username { get; set; } = string.Empty;
 
+    public string? Bio { get; set; }
+
     public DateTime? Birthday { get; set; }
 
     [StringLength(100)]
@@ -21,4 +23,5 @@ public class User
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? UpdatedAt { get; set; }
+    public DateTime? SignedInAt { get; set; }
 }

@@ -33,9 +33,6 @@ public class UserService
         _context.Users.Add(newUser);
         await _context.SaveChangesAsync();
 
-        Console.WriteLine(newUser.PasswordHash);
-
-
         return new UserDto
         {
             Id = newUser.Id,
